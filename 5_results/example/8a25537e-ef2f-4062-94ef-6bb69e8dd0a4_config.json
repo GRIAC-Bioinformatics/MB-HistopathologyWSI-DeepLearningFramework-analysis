@@ -1,0 +1,38 @@
+{
+    "org_size": [
+        120,
+        120
+    ],
+    "size": [
+        224,
+        224
+    ],
+    "data_imputation_type": "random_image",
+    "threshold": 0.3,
+    "tf_model": "Inception-ResNet-V2",
+    "full_retrain": true,
+    "freeze_till_block": 5,
+    "loss_func": "binary_crossentropy",
+    "lr": 0.001,
+    "decay": 0.99,
+    "dr": 0,
+    "batch_size": 64,
+    "epochs": 50,
+    "independent_sets": true,
+    "class_imb": "Oversample",
+    "augmentation": "heavy",
+    "lr_patience": 10,
+    "lr_factor": 0.1,
+    "lr_cooldown": 0,
+    "lr_threshold": 0.0001,
+    "lr_min": 1e-05,
+    "final_connected_layer": "fc",
+    "mixed_precision": true,
+    "grid_start_file": null,
+    "base_dir": "/workspace/ImageRecognition",
+    "results_path": "/workspace/ImageRecognition/5_results",
+    "warmup_epochs": 20,
+    "run_id": "8a25537e-ef2f-4062-94ef-6bb69e8dd0a4",
+    "data_path": "/workspace/ImageRecognition/1_data/patches_120x120/patches_cutoff_random_image_imputed_0.3/",
+    "output_path": "/workspace/ImageRecognition/5_results/random_image/threshold_0.3/20241118_140931_8a25537e-ef2f-4062-94ef-6bb69e8dd0a4_patches_120x120"
+}

@@ -1,0 +1,114 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+venv_test/
+ENV/
+env/
+.venv
+
+# Secrets - exclude all files except README.md
+secrets/*
+!secrets/README.md
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Results and generated outputs
+# Ignore everything in 5_results/ but allow specific files/directories
+5_results/**
+# Keep only template files and example directory in results
+!5_results/models_evaluation_selection_template.json
+!5_results/example/
+!5_results/example/**
+
+# Model weights and checkpoints
+*.pth
+*.h5
+*.ckpt
+*.pkl
+*.pb
+*.onnx
+3_model/base_model_architectures/*.pth
+# Allow PKL files in example directory (training data for plots)
+!5_results/example/**/*.pkl
+
+# Image files (all formats)
+*.png
+*.jpg
+*.jpeg
+*.tif
+*.tiff
+*.bmp
+*.gif
+*.svg
+*.webp
+*.ico
+
+# Allow images in example directory
+!5_results/example/**/*.png
+!5_results/example/**/*.jpg
+!5_results/example/**/*.jpeg
+!5_results/example/**/*.svg
+
+# Data directories with images/patches (generated from preprocessing)
+1_data/patches_*/
+1_data/*/patches_*/
+1_data/*/Inside/
+1_data/*/Outside/
+1_data/*/RBC_masks/
+1_data/*/train_dir/
+1_data/*/val_dir/
+1_data/*/test_dir/
+1_data/*/summary_table.csv
+
+# Keep only essential data files
+!1_data/mapping.csv
+!1_data/patient_partitions_*.xlsx
+
+# Large CSV result files are already excluded by 5_results/** above
+# (No need for separate pattern since entire directory is ignored)
+
+# Logs
+*.log
+terminal_output.txt
+
+# WandB
+wandb/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak

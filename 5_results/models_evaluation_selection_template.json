@@ -1,0 +1,72 @@
+{
+    "/workspace/ImageRecognition/5_results/random_image/threshold_0.2": {
+        "data_type": "random_image",
+        "threshold": 0.2,
+        "folder": "20241114_193320_c9933be4-1d7e-4e0f-9621-0bb1399b317a_patches_120x120"
+    },
+    "/workspace/ImageRecognition/5_results/black/threshold_0.2": {
+        "data_type": "black",
+        "threshold": 0.2,
+        "folder": "20241112_032557_500fea70-5872-41cd-9394-e089f82e62ba_patches_120x120"
+    },
+    "/workspace/ImageRecognition/5_results/random_image/threshold_0.3": {
+        "data_type": "random_image",
+        "threshold": 0.3,
+        "folder": "20241112_073647_de760423-161b-4c56-b632-12de9c80c034_patches_120x120"
+    },
+    "/workspace/ImageRecognition/5_results/black/threshold_0.3": {
+        "data_type": "black",
+        "threshold": 0.3,
+        "folder": "20241112_110645_8c4c80b3-b8a1-4ede-b3b8-bd929a8d73f1_patches_120x120"
+    },
+    "/workspace/ImageRecognition/5_results/random_image/threshold_0.4": {
+        "data_type": "random_image",
+        "threshold": 0.4,
+        "folder": "20241112_143849_5df0d2c7-9328-43f6-a02b-701af4c5cc82_patches_120x120"
+    },
+    "/workspace/ImageRecognition/5_results/black/threshold_0.4": {
+        "data_type": "black",
+        "threshold": 0.4,
+        "folder": "20241112_173013_e72483a3-8a4e-429f-91f3-bf0fcc9a3347_patches_120x120"
+    },
+    "/workspace/ImageRecognition/5_results/random_image/threshold_0.5": {
+        "data_type": "random_image",
+        "threshold": 0.5,
+        "folder": "20241112_222238_ee92b2f9-d4d9-403b-9a14-bf0f97b4dafd_patches_120x120"
+    },
+    "/workspace/ImageRecognition/5_results/black/threshold_0.5": {
+        "data_type": "black",
+        "threshold": 0.5,
+        "folder": "20241113_003359_4309b744-ac3e-412e-8bea-1846a8b2212f_patches_120x120"
+    },
+    "/workspace/ImageRecognition/5_results/random_image/threshold_0.6": {
+        "data_type": "random_image",
+        "threshold": 0.6,
+        "folder": "20241113_024636_ad95d890-7482-4528-80b9-75b820c449f2_patches_120x120"
+    },
+    "/workspace/ImageRecognition/5_results/black/threshold_0.6": {
+        "data_type": "black",
+        "threshold": 0.6,
+        "folder": "20241113_042058_681f648e-2cd5-48c6-b5ed-c924ee0ce03f_patches_120x120"
+    },
+    "/workspace/ImageRecognition/5_results/random_image/threshold_0.7": {
+        "data_type": "random_image",
+        "threshold": 0.7,
+        "folder": "20241113_055521_6bc36717-933f-4da2-a19a-2a8335ed4d49_patches_120x120"
+    },
+    "/workspace/ImageRecognition/5_results/black/threshold_0.7": {
+        "data_type": "black",
+        "threshold": 0.7,
+        "folder": "20241113_065303_7c3305bc-f1e2-4768-8862-1459c072c108_patches_120x120"
+    },
+    "/workspace/ImageRecognition/5_results/random_image/threshold_0.8": {
+        "data_type": "random_image",
+        "threshold": 0.8,
+        "folder": "20241113_075044_c7f47443-fbc8-46a3-af4c-5b11b2511783_patches_120x120"
+    },
+    "/workspace/ImageRecognition/5_results/black/threshold_0.8": {
+        "data_type": "black",
+        "threshold": 0.8,
+        "folder": "20241113_082017_e8222146-bad2-4a9c-95d3-418b5c68706a_patches_120x120"
+    }
+}
