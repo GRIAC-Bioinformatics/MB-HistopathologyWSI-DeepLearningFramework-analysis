@@ -98,6 +98,9 @@ Thumbs.db
 !1_data/mapping.csv
 !1_data/patient_partitions_*.xlsx
 
+# Data zip files (large datasets for Zenodo upload)
+1_data/*.zip
+
 # Large CSV result files are already excluded by 5_results/** above
 # (No need for separate pattern since entire directory is ignored)
 

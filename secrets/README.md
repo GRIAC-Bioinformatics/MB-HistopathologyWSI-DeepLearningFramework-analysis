@@ -15,6 +15,9 @@ Private SSH key for secure connections.
 ### `ssh_key.ssh.pub`
 Public SSH key corresponding to the private key.
 
+### `zenodo_token.txt`
+API token for Zenodo uploads (get from https://zenodo.org/account/settings/applications/tokens/).
+
 ## Important Notes
 
 - **DO NOT** commit these files to Git
