@@ -83,23 +83,10 @@ Thumbs.db
 !5_results/example/**/*.jpeg
 !5_results/example/**/*.svg
 
-# Data directories with images/patches (generated from preprocessing)
-1_data/patches_*/
-1_data/*/patches_*/
-1_data/*/Inside/
-1_data/*/Outside/
-1_data/*/RBC_masks/
-1_data/*/train_dir/
-1_data/*/val_dir/
-1_data/*/test_dir/
-1_data/*/summary_table.csv
-
-# Keep only essential data files
-!1_data/mapping.csv
-!1_data/patient_partitions_*.xlsx
-
-# Data zip files (large datasets for Zenodo upload)
-1_data/*.zip
+# Data directory - exclude everything except upload script
+1_data/*
+!1_data/data_upload_script/
+!1_data/data_upload_script/**
 
 # Large CSV result files are already excluded by 5_results/** above
 # (No need for separate pattern since entire directory is ignored)
