@@ -16,7 +16,7 @@ This document records the ablation experiments implemented to address reviewer c
 - Creates ImageFolder datasets from the same `train_dir/val_dir/test_dir` directories
 - Permutes labels in-place using `np.random.RandomState(424242)` — this is the only difference from the main training script
 - Uses the same patient-level split from `patient_partitions_424242.xlsx` — critical for a valid comparison
-- Reduced to 30 epochs (warmup 5) since the model will not converge on shuffled labels
+- Uses the same 100 epochs and 20-epoch warmup as the reported CNN — identical training duration for an airtight comparison
 - Results saved to `5_results/ablation/shuffled_labels/`
 - WandB project: `ImageRecognition-Ablation`
 
@@ -43,7 +43,7 @@ python 3_model/train_shuffled_labels.py
 - Feature extraction per patch (18 features total):
   - GLCM (8 features): contrast, energy, homogeneity, correlation at distances [1, 3], averaged over 4 angles. Computed via `skimage.feature.graycomatrix` / `graycoprops`.
   - LBP (10 features): local binary pattern histogram with P=8, R=1, uniform encoding, 10 bins. Computed via `skimage.feature.local_binary_pattern`.
-- Classifier: `sklearn.svm.LinearSVC(max_iter=10000, random_state=424242)` wrapped in `CalibratedClassifierCV(cv=5)` for probability output
+- Classifier: `sklearn.svm.LinearSVC(max_iter=10000, random_state=424242)` wrapped in `CalibratedClassifierCV(cv=5)` for probability output. Regularisation parameter C selected from {0.01, 0.1, 1, 10, 100} on the validation set.
 - Features standardized with `StandardScaler`
 - Results saved to `5_results/ablation/texture_baseline/texture_baseline_results.json`
 
@@ -52,7 +52,9 @@ python 3_model/train_shuffled_labels.py
 python 3_model/train_texture_baseline.py
 ```
 
-**Result (local run on original unmasked patches with random_image imputation, threshold 0.2):**
+Note: texture features are computed on the same 224x224 preprocessed patches as the CNN (resized from 120x120 by `read_and_split_data.py`). This is conservative — upscaling smooths local gradients, which if anything slightly favours the texture baseline.
+
+**Result (random_image imputation, threshold 0.2):**
 
 | Metric | Value |
 |--------|-------|

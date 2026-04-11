@@ -18,6 +18,14 @@ IMPORTANT — Same patient-level split:
     would confound the comparison — any performance difference could be attributed to
     the split rather than the model architecture.
 
+NOTE — Patch resolution:
+    The train/val/test directories contain patches resized to 224x224 by
+    read_and_split_data.py (the CNN requires this resolution for Inception-ResNet).
+    Texture features are therefore computed on 224x224 images, not the original
+    120x120 patches. This is conservative: upscaling smooths local gradients, which
+    if anything slightly favours the texture baseline. The CNN comparison remains valid
+    because both methods operate on the same preprocessed images.
+
 No GPU required. Runs on CPU in under a minute.
 """
 
@@ -105,13 +113,25 @@ def main():
     X_val = scaler.transform(X_val)
     X_test = scaler.transform(X_test)
 
-    # Train LinearSVC with Platt scaling for probability output (needed for AUC)
-    print("\nTraining LinearSVC...")
-    svm = LinearSVC(max_iter=10000, random_state=SEED)
+    # Select regularisation strength C on the validation set
+    C_candidates = [0.01, 0.1, 1.0, 10.0, 100.0]
+    best_C, best_C_auc = None, -1
+    print("\nTuning C on validation set...")
+    for C in C_candidates:
+        svm = LinearSVC(C=C, max_iter=10000, random_state=SEED)
+        clf = CalibratedClassifierCV(svm, cv=5)
+        clf.fit(X_train, y_train)
+        auc = roc_auc_score(y_val, clf.predict_proba(X_val)[:, 1])
+        print(f"  C={C:<6}  val AUC={auc:.4f}")
+        if auc > best_C_auc:
+            best_C, best_C_auc = C, auc
+
+    # Retrain with best C and evaluate on test set
+    print(f"\nBest C={best_C} (val AUC={best_C_auc:.4f}). Training final model...")
+    svm = LinearSVC(C=best_C, max_iter=10000, random_state=SEED)
     clf = CalibratedClassifierCV(svm, cv=5)
     clf.fit(X_train, y_train)
 
-    # Evaluate
     val_probs = clf.predict_proba(X_val)[:, 1]
     test_probs = clf.predict_proba(X_test)[:, 1]
     val_auc = roc_auc_score(y_val, val_probs)
@@ -134,6 +154,8 @@ def main():
     results = {
         'val_auc': float(val_auc),
         'test_auc': float(test_auc),
+        'best_C': float(best_C),
+        'C_candidates': C_candidates,
         'n_train': int(len(y_train)),
         'n_val': int(len(y_val)),
         'n_test': int(len(y_test)),

@@ -53,10 +53,6 @@ from train_nn_inner_outer_gpu_pytorch import (
 )
 
 SEED = 424242
-# Reduced epochs — the model will not converge on shuffled labels,
-# so there is no need to train for the full 100 epochs.
-EPOCHS = 30
-WARMUP_EPOCHS = 5
 
 
 def shuffle_dataset_labels(dataset, rng):
@@ -69,14 +65,11 @@ def shuffle_dataset_labels(dataset, rng):
     rng.shuffle(labels)
     dataset.samples = [(path, label) for (path, _), label in zip(dataset.samples, labels)]
     dataset.imgs = dataset.samples  # ImageFolder uses both .samples and .imgs
+    dataset.targets = labels         # ImageFolder.targets is a separate list
 
 
 def main():
     config = load_custom_config()
-
-    # Override training duration
-    config['epochs'] = EPOCHS
-    config['warmup_epochs'] = WARMUP_EPOCHS
 
     # Save results separately from real training runs
     config['results_path'] = str(RESULTS_DIR / 'ablation' / 'shuffled_labels')
@@ -107,7 +100,8 @@ def main():
 
     # --- Shuffle labels (the only difference from the main training script) ---
     # A single RandomState seeded with 424242 shuffles train, then val, then test
-    # in that order, making the permutation fully reproducible.
+    # in that fixed order, making the permutation fully reproducible.
+    # NOTE: changing the iteration order would change all three permutations.
     rng = np.random.RandomState(SEED)
     for dataset in [train_dataset, val_dataset, test_dataset]:
         shuffle_dataset_labels(dataset, rng)
