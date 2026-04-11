@@ -170,81 +170,81 @@ pip install -r requirements.txt
 
 ### RunPod GPU Environment Setup
 
-This project has been tested on RunPod cloud GPU instances. Follow these steps:
+This project has been tested on RunPod cloud GPU instances. The recommended workflow is to **edit code locally using VS Code Remote-SSH** while running all computation on the pod's GPU.
 
 #### Step 1: Create RunPod Instance
 
 1. Go to [RunPod Dashboard](https://www.runpod.io/) and log in
 2. Click **"Pods"** → **"Deploy Pod"**
-3. **Select GPU Template**:
-   - Recommended: PyTorch 2.0+ or TensorFlow with CUDA 11.8+
-   - Choose GPU: RTX 3090 (24GB), RTX 4090 (24GB), or A100 (40GB/80GB)
-   - Minimum: RTX 3060 (12GB) for smaller models
-4. **Configure Storage**:
-   - Minimum 50GB for code and models
-   - Additional storage for data (mount via Network Volumes)
-5. **Set Network Volume** (optional): For persistent storage across pod restarts
+3. **Select GPU Template**: PyTorch 2.0+ with CUDA 11.8+
+4. **Select GPU**: RTX 3090 (24GB), RTX 4090 (24GB), or A100 (40GB/80GB)
+5. **Configure Storage**: Minimum 50GB for code, models, and data
+6. **Expose TCP ports**: `22` (for SSH)
+7. Deploy the pod
 
-#### Step 2: Mount Cloud Storage (GCP) via RunPod GUI
+#### Step 2: Set Up SSH Key on the Pod
 
-1. In RunPod dashboard, go to your pod's **"Network Volumes"** or **"Storage"** section
-2. Click **"Add Network Volume"** or **"Mount Storage"**
-3. For **Google Cloud Storage**:
-   - Select "Google Cloud Storage" as storage type
-   - Enter your GCS bucket name
-   - Configure mount point (e.g., `/workspace/gcs-data` or `/data`)
-   - Authenticate using service account JSON key (upload via GUI) or OAuth
-4. The mount will be automatically available when the pod starts
-
-#### Step 3: Connect via SSH
-
-1. In RunPod dashboard, find your pod's **"Connect"** or **"SSH"** section
-2. Copy the SSH command (e.g., `ssh root@ssh.runpod.io -p <port>`)
-3. **Set up SSH key** (recommended):
-   - Go to **"Settings"** → **"SSH Keys"** in RunPod dashboard
-   - Add your public SSH key (from `secrets/ssh_key.ssh.pub`)
-4. Connect:
+1. In the pod's **Connect** tab, enable **Web Terminal** and open it
+2. Run this command to install your public key (replace with your key from `secrets/ssh_key.ssh.pub`):
    ```bash
-   ssh root@ssh.runpod.io -p <port>
-   # Or with SSH key:
-   ssh -i secrets/ssh_key.ssh root@ssh.runpod.io -p <port>
+   python3 -c "import os; os.makedirs('/root/.ssh',exist_ok=True); open('/root/.ssh/authorized_keys','w').write('YOUR_PUBLIC_KEY_HERE\n'); os.chmod('/root/.ssh/authorized_keys',0o600)"
    ```
+3. Note the **SSH over exposed TCP** connection details from the Connect tab (host IP and port)
 
-#### Step 4: Clone Repository and Setup
+#### Step 3: Configure Local SSH
+
+Add the pod to your local `~/.ssh/config`:
+```
+Host runpod
+    HostName <HOST_IP>
+    Port <PORT>
+    User root
+    IdentityFile /path/to/project/secrets/ssh_key.ssh
+```
+
+Verify the connection:
+```bash
+ssh runpod "echo 'Connection OK' && nvidia-smi --query-gpu=name --format=csv,noheader"
+```
+
+#### Step 4: Connect with VS Code Remote-SSH (Recommended)
+
+This lets you edit code locally while running all computation on the pod's GPU:
+
+1. Install the **Remote - SSH** extension in VS Code
+2. `Cmd+Shift+P` → **"Remote-SSH: Connect to Host"** → select `runpod`
+3. Open `/workspace/ImageRecognition` as your workspace
+4. Use the integrated terminal for all GPU commands — it runs on the pod
+
+#### Step 5: Clone Repository and Setup on Pod
 
 ```bash
 cd /workspace
-git clone <your-repo-url> ImageRecognition
+git clone https://github.com/GRIAC-Bioinformatics/MB-HistopathologyWSI-DeepLearningFramework-analysis.git ImageRecognition
 cd ImageRecognition
-
-# Create virtual environment
-python3 -m venv venv
+./setup.sh
 source venv/bin/activate
-
-# Install dependencies
-pip install --upgrade pip
-pip install -r requirements.txt
-
-# Verify GPU
-python -c "import torch; print(f'CUDA: {torch.cuda.is_available()}, GPU: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else \"None\"}')"
 ```
 
-#### Step 5: Access Mounted Data
+#### Step 6: Transfer Data
 
+From your local machine, transfer patches and metadata to the pod:
 ```bash
-# Check mount (path depends on your RunPod configuration)
-ls -lh /workspace/gcs-data  # or /data
-# Verify data access
-ls -lh /workspace/ImageRecognition/1_data/
+scp -i secrets/ssh_key.ssh -P <PORT> \
+  1_data/mapping.csv 1_data/patient_partitions_424242.xlsx \
+  root@<HOST_IP>:/workspace/ImageRecognition/1_data/
+
+ssh runpod "mkdir -p /workspace/ImageRecognition/1_data/patches_120x120"
+
+scp -i secrets/ssh_key.ssh -P <PORT> \
+  1_data/patches_120x120/patches_original.zip \
+  root@<HOST_IP>:/workspace/ImageRecognition/1_data/patches_120x120/
 ```
 
-#### Step 6: Configure Paths
-
-- Most scripts use `/workspace/ImageRecognition` as base path (works out of the box)
-- If data is mounted elsewhere, update paths in:
-  - `2_preprocessing/patch_splitting/*.py`
-  - `3_model/train_nn_inner_outer_gpu_pytorch.py`
-  - `4_evaluation/*.py`
+Then unzip on the pod:
+```bash
+cd /workspace/ImageRecognition/1_data/patches_120x120 && unzip patches_original.zip
+```
 
 #### Step 7: Set Up WandB (Optional)
 
