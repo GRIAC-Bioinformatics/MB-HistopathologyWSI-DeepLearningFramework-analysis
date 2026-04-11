@@ -37,3 +37,5 @@ WSI + Masks → Patches → Imputed Patches → Train/Val/Test → Model → Eva
 | `train_nn_inner_outer_gpu_pytorch.py` | Train Inception-ResNet-V2 model |
 | `evaluate_learning_ability.py` | GRAD-CAM and Integrated Gradients analysis |
 | `plot_plus_statistical_test.py` | Generate publication plots |
+| `train_shuffled_labels.py` | Ablation: shuffled-label negative control (GPU) |
+| `train_texture_baseline.py` | Ablation: GLCM+LBP+SVM texture baseline (CPU) |

@@ -39,6 +39,7 @@ python 3_model/train_nn_inner_outer_gpu_pytorch.py
 **Additional Documentation**:
 - **[PIPELINE_GUIDE.md](PIPELINE_GUIDE.md)**: Detailed step-by-step pipeline execution guide
 - **[REPRODUCTION_GUIDE.md](REPRODUCTION_GUIDE.md)**: Complete guide for reproducing manuscript results
+- **[ABLATION_RESULTS.md](ABLATION_RESULTS.md)**: Ablation study experiments and results
 
 ## Overview
 
@@ -89,7 +90,9 @@ ImageRecognition/
 │   │   ├── config_custom.json          # Custom single-run configuration
 │   │   ├── config_grid.json            # Grid search configuration
 │   │   └── config_hydra.yaml           # Hydra configuration
-│   └── train_nn_inner_outer_gpu_pytorch.py  # Main training script (PyTorch)
+│   ├── train_nn_inner_outer_gpu_pytorch.py  # Main training script (PyTorch)
+│   ├── train_shuffled_labels.py             # Ablation: shuffled-label control
+│   └── train_texture_baseline.py            # Ablation: GLCM+LBP+SVM baseline
 │
 ├── 4_evaluation/                        # Evaluation and visualization
 │   ├── config/                          # Evaluation configuration files
@@ -104,6 +107,7 @@ ImageRecognition/
 │   ├── {data_type}/                     # Results by imputation type
 │   │   └── threshold_{threshold}/      # Results by tissue threshold
 │   ├── learning_evaluation/             # Evaluation analysis results
+│   ├── ablation/                        # Ablation study results
 │   └── completed_grid_runs/            # Grid search tracking
 │
 └── secrets/                             # Sensitive files (see secrets/README.md)

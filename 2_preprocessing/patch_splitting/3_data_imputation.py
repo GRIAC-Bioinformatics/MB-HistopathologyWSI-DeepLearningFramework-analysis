@@ -311,7 +311,7 @@ def process_threshold(threshold):
             pathlist = Path(directory).glob('*.png')
 
             # Get the subfolder name (Inside or Outside)
-            subfolder = os.path.basename(os.path.dirname(directory))
+            subfolder = os.path.basename(directory)
             # Create output directories for each processing method
             raw_output_dir = os.path.join(raw_dir, subfolder)
             os.makedirs(raw_output_dir, exist_ok=True)

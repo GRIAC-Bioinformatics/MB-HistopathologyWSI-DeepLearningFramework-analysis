@@ -48,6 +48,24 @@ python 4_evaluation/plot_plus_statistical_test.py
 - **Test AUC**: ~0.82-0.84
 - **Training time**: 10-20 hours on RTX 3090
 
+## Ablation Study
+
+Two additional experiments validate the model's learning signal. Both use the same patient-level split (`patient_partitions_424242.xlsx`) and the same preprocessed patches (random_image imputation, threshold 0.2).
+
+1. **Shuffled-label negative control** (requires GPU):
+```bash
+python 3_model/train_shuffled_labels.py
+```
+Trains the same model on randomly permuted labels. Expected test AUC ~0.50.
+
+2. **Texture baseline — GLCM + LBP + SVM** (CPU only):
+```bash
+python 3_model/train_texture_baseline.py
+```
+Classical texture features + linear SVM. Expected test AUC ~0.71.
+
+See `ABLATION_RESULTS.md` for full details and results.
+
 ## Notes
 
 - Use exact patient partitions from `1_data/patient_partitions_424242.xlsx`
