@@ -31,8 +31,10 @@ from .paths import (
     get_imputed_patches_path,
     get_results_path,
     get_model_path,
+    get_config_path,
     validate_paths,
     validate_data_exists,
+    validate_model_weights,
     setup_environment,
 )
 
@@ -51,7 +53,9 @@ __all__ = [
     'get_imputed_patches_path',
     'get_results_path',
     'get_model_path',
+    'get_config_path',
     'validate_paths',
     'validate_data_exists',
+    'validate_model_weights',
     'setup_environment',
 ]
