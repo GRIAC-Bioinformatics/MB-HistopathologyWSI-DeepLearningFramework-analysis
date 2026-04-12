@@ -72,6 +72,16 @@ Test set classification report:
     accuracy                           0.66      9919
 ```
 
+C tuning on validation set (best C selected, then retrained and evaluated on test):
+```
+C=0.01    val AUC=0.7009
+C=0.1     val AUC=0.7038
+C=1.0     val AUC=0.7043  <-- selected
+C=10.0    val AUC=0.7042
+C=100.0   val AUC=0.7042
+```
+Performance is nearly identical across all C values, confirming the result is robust and not sensitive to hyperparameter choice.
+
 **Interpretation:** The texture baseline achieves AUC 0.71, confirming that basic texture differences exist between compartments (expected — they are anatomically different), but the CNN (AUC 0.84) captures substantially more than simple texture statistics. This supports the value of the deep learning approach.
 
 ---
@@ -85,6 +95,27 @@ Test set classification report:
 | Full pipeline (random imputation) | Best preprocessing config | 0.84 (existing) |
 | **Shuffled labels** | Genuine tissue signal? | ~0.50 (pending GPU run) |
 | **Texture baseline (GLCM+LBP+SVM)** | DL vs. classical features | **0.71** |
+
+## Code review and fixes
+
+Both scripts were reviewed for analytical correctness and peer review robustness. Key fixes applied:
+
+**Shuffled labels:**
+- Fixed `dataset.targets` not being updated after label permutation (`.samples` and `.imgs` were updated but `.targets` — a separate list in ImageFolder — was stale). No downstream code currently reads `.targets`, but the inconsistency could cause confusion during review.
+- Reverted to 100 epochs / 20 warmup to match the CNN exactly. The earlier 30-epoch version was faster but left room for a reviewer to argue "insufficient training."
+- Added comment that dataset iteration order (train, val, test) is load-bearing for RNG reproducibility.
+
+**Texture baseline:**
+- Added regularisation parameter C tuning over {0.01, 0.1, 1, 10, 100} on the validation set. C=1.0 (the sklearn default) was confirmed optimal. This preempts a reviewer arguing the baseline was artificially weakened.
+- Documented that texture features are computed on 224x224 patches (resized by `read_and_split_data.py`), not native 120x120. This is conservative: upscaling smooths gradients, slightly favouring the texture baseline.
+
+**Verified correct (no changes needed):**
+- Label distribution preserved after shuffling (in-place permutation, no replacement)
+- No data leakage — shuffling within each split, patient-level split intact
+- GLCM levels=256, angle averaging axis, and LBP histogram binning all correct
+- StandardScaler fit on train only
+- Label mapping (Inside=0, Outside=1) matches ImageFolder alphabetical convention
+- CalibratedClassifierCV fits exclusively on training data
 
 ## Bug fix during implementation
 
