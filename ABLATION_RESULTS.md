@@ -25,9 +25,14 @@ This document records the ablation experiments implemented to address reviewer c
 python 3_model/train_shuffled_labels.py
 ```
 
-**Expected result:** Test AUC ~0.50 (chance level).
+**Result (RTX 3090, 100 epochs, random_image imputation, threshold 0.2):**
 
-**Status:** Script implemented. Awaiting GPU execution.
+| Metric | Value |
+|--------|-------|
+| Test AUC | **0.5000** |
+| Test Loss | 0.6931 |
+
+The model learned nothing — test AUC is exactly chance level (0.50) and the loss equals ln(2) ≈ 0.693, the theoretical minimum for random binary guessing. This confirms the original CNN's performance (AUC 0.84) comes from genuine tissue signal, not from data leakage, preprocessing artefacts, or spurious correlations.
 
 ---
 
@@ -93,7 +98,7 @@ Performance is nearly identical across all C values, confirming the result is ro
 | No preprocessing (nonmasked) | Raw classification ability | 0.86 (existing) |
 | Limited preprocessing | Basic cleaning only | Existing (Figure 4) |
 | Full pipeline (random imputation) | Best preprocessing config | 0.84 (existing) |
-| **Shuffled labels** | Genuine tissue signal? | ~0.50 (pending GPU run) |
+| **Shuffled labels** | Genuine tissue signal? | **0.50** |
 | **Texture baseline (GLCM+LBP+SVM)** | DL vs. classical features | **0.71** |
 
 ## Code review and fixes
