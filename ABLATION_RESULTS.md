@@ -91,6 +91,37 @@ Performance is nearly identical across all C values, confirming the result is ro
 
 ---
 
+### Experiment 3: Simple CNN Baseline (no pretraining)
+
+**Script:** `3_model/train_simple_cnn.py`
+
+**What it does:** Trains a lightweight 4-block CNN from scratch (random Kaiming initialisation, no ImageNet pretraining) on the exact same data, splits, and hyperparameters as the Inception-ResNet-V2 model. This isolates the contribution of transfer learning.
+
+**Design:**
+- Same wrapper pattern as `train_shuffled_labels.py` — imports training utilities from the main script
+- Custom `SimpleCNN` architecture defined in the script (no `timm`, no pretrained weights)
+- Architecture: 4 conv blocks (32→64→128→256 channels), each with BatchNorm + ReLU + pooling, followed by AdaptiveAvgPool(1) and a single linear output
+- 389,633 parameters (vs 55.9M for Inception-ResNet-V2)
+- All other settings identical: same data, transforms, class imbalance handling, loss, optimizer, 100 epochs, 20-epoch warmup, lr scheduler
+
+**How to run (requires GPU):**
+```bash
+python 3_model/train_simple_cnn.py
+```
+
+**Result (RTX 3090, 100 epochs, random_image imputation, threshold 0.2):**
+
+| Metric | Value |
+|--------|-------|
+| Test AUC | **0.7602** |
+| Test Loss | 0.6497 |
+| Best Val AUC | 0.7587 |
+| Parameters | 389,633 |
+
+**Interpretation:** The simple CNN (AUC 0.76) outperforms the texture baseline (0.71), confirming that deep learning captures more than handcrafted texture features even without pretraining. The pretrained Inception-ResNet-V2 (AUC 0.84) provides a further +0.08 boost, demonstrating that ImageNet transfer learning is beneficial for histopathology despite the domain gap. This completes the hierarchy of evidence: classical features (0.71) < CNN from scratch (0.76) < pretrained CNN (0.84).
+
+---
+
 ## Ablation summary table
 
 | Experiment | What it tests | Test AUC |
@@ -100,6 +131,7 @@ Performance is nearly identical across all C values, confirming the result is ro
 | Full pipeline (random imputation) | Best preprocessing config | 0.84 (existing) |
 | **Shuffled labels** | Genuine tissue signal? | **0.50** |
 | **Texture baseline (GLCM+LBP+SVM)** | DL vs. classical features | **0.71** |
+| **Simple CNN (no pretraining)** | Transfer learning value | **0.76** |
 
 ## Code review and fixes
 
