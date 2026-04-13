@@ -136,6 +136,18 @@ Ran on the same RunPod instance:
 
 Retrieved results (checkpoints, training curves, config JSON) from pod to local `5_results/ablation/simple_cnn/`.
 
+### Phase 11: Rebuttal figures
+
+**File created:** `4_evaluation/plot_rebuttal_figures.py`
+
+Standalone script that generates three figures for the rebuttal letter, reading entirely from already-saved experiment outputs (no retraining):
+
+1. **`fig1_ablation_auc.png` / `.pdf`** — Horizontal bar chart of test AUC for all four models (shuffled 0.50, texture 0.71, simple CNN 0.76, Inception-ResNet-V2 0.84) with a chance-level reference line.
+2. **`fig2_training_curves.png` / `.pdf`** — Two-panel figure (validation loss + validation AUC) showing training dynamics of shuffled labels vs. simple CNN vs. main CNN. Visually demonstrates that the shuffled-label model never learns.
+3. **`fig3_texture_features.png` / `.pdf`** — 2×3 grid showing an example Inside and Outside patch alongside their LBP image and GLCM matrix. Makes the classical baseline tangible for the reviewer.
+
+Saved to `5_results/ablation/rebuttal_figures/`. Runs on CPU in seconds.
+
 ## Final results
 
 | Experiment | What it tests | Test AUC |
@@ -188,3 +200,5 @@ e7e5dfe Add complete ablation study work log
 | `5_results/ablation/texture_baseline/texture_baseline_results.json` | Generated |
 | `5_results/ablation/shuffled_labels/` | Generated (checkpoints, plots, config) |
 | `5_results/ablation/simple_cnn/` | Generated (checkpoints, plots, config) |
+| `4_evaluation/plot_rebuttal_figures.py` | Created |
+| `5_results/ablation/rebuttal_figures/` | Generated (3 figures, PNG + PDF) |
