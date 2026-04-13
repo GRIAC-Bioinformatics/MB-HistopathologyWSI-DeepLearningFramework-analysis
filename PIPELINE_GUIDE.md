@@ -39,3 +39,4 @@ WSI + Masks → Patches → Imputed Patches → Train/Val/Test → Model → Eva
 | `plot_plus_statistical_test.py` | Generate publication plots |
 | `train_shuffled_labels.py` | Ablation: shuffled-label negative control (GPU) |
 | `train_texture_baseline.py` | Ablation: GLCM+LBP+SVM texture baseline (CPU) |
+| `train_simple_cnn.py` | Ablation: simple CNN from scratch (GPU) |

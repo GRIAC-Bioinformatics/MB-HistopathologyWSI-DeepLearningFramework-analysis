@@ -64,6 +64,12 @@ python 3_model/train_texture_baseline.py
 ```
 Classical texture features + linear SVM. Expected test AUC ~0.71.
 
+3. **Simple CNN baseline — no pretraining** (requires GPU):
+```bash
+python 3_model/train_simple_cnn.py
+```
+Lightweight 4-block CNN (~390K params) trained from scratch. Expected test AUC ~0.76.
+
 See `ABLATION_RESULTS.md` for full details and results.
 
 ## Notes

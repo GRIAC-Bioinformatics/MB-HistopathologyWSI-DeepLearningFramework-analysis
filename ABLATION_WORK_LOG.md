@@ -4,9 +4,10 @@ Full record of implementation work performed on 2026-04-11 and 2026-04-12 to add
 
 ## Objective
 
-Implement two new ablation experiments proving the deep learning model learns from genuine tissue signal rather than preprocessing artefacts:
-1. Shuffled-label negative control (AUC should drop to ~0.50)
-2. Classical texture baseline (contextualise CNN vs. simple features)
+Implement three ablation experiments:
+1. Shuffled-label negative control — prove the model learns from genuine tissue signal (AUC should drop to ~0.50)
+2. Classical texture baseline — contextualise CNN vs. simple features
+3. Simple CNN baseline — contextualise the value of transfer learning
 
 ## Work performed
 
@@ -110,6 +111,31 @@ Retrieved results (checkpoints, training curves, config JSON) from pod to local 
 - Updated `README.md` — project structure tree, link to ABLATION_RESULTS.md
 - Updated `PIPELINE_GUIDE.md` — ablation scripts in key scripts table
 
+### Phase 9: Implementation — Experiment 3 (simple CNN baseline)
+
+**File created:** `3_model/train_simple_cnn.py`
+
+Follows the same pattern as `train_shuffled_labels.py` but replaces `build_model()` with a custom `SimpleCNN` class:
+
+- 4 conv blocks: 32 → 64 → 128 → 256 channels, each with BatchNorm + ReLU + pooling
+- Final AdaptiveAvgPool(1) + Linear(256, 1)
+- 389,633 parameters (vs. 55.9M for Inception-ResNet-V2)
+- Random Kaiming initialisation, no pretrained weights
+- All other settings identical to the main CNN (data, transforms, class imbalance, loss, optimizer, 100 epochs, 20-epoch warmup, lr scheduler, seed 424242)
+
+### Phase 10: GPU execution — simple CNN
+
+Ran on the same RunPod instance:
+1. Cleaned up intermediate data directories on pod to free network filesystem quota
+2. Pulled latest code
+3. Patched results path to local disk (`/tmp/ablation_results/`) to avoid the network filesystem `torch.save` issue
+4. Ran with `WANDB_MODE=disabled`
+5. Training completed: 100 epochs, ~1.5 hours total (faster than Inception-ResNet-V2 due to smaller model)
+
+**Result: test AUC = 0.7602, test loss = 0.6497, best val AUC = 0.7587**
+
+Retrieved results (checkpoints, training curves, config JSON) from pod to local `5_results/ablation/simple_cnn/`.
+
 ## Final results
 
 | Experiment | What it tests | Test AUC |
@@ -118,8 +144,15 @@ Retrieved results (checkpoints, training curves, config JSON) from pod to local 
 | Full pipeline (random imputation) | Best preprocessing config | 0.84 (existing) |
 | **Shuffled labels** | Genuine tissue signal? | **0.50** |
 | **Texture baseline (GLCM+LBP+SVM)** | DL vs. classical features | **0.71** |
+| **Simple CNN (no pretraining)** | Transfer learning value | **0.76** |
 
-**Key argument for the rebuttal:** The full pipeline CNN achieves AUC 0.84, the shuffled-label model performs at exact chance level (0.50, confirming genuine signal), and the texture baseline performs substantially worse (0.71, confirming the CNN captures more than basic texture). Together with the existing attribution analysis (Grad-CAM, Integrated Gradients), this provides strong evidence that the model learns from tissue content.
+**Key argument for the rebuttal:** The results form a clean hierarchy of evidence.
+- Shuffled labels (0.50) confirm the signal is genuine, not an artefact.
+- The texture baseline (0.71) shows basic compartment-level texture differences exist.
+- The simple CNN from scratch (0.76) shows deep learning captures more than handcrafted features.
+- The pretrained Inception-ResNet-V2 (0.84) shows ImageNet transfer learning adds a further +0.08 despite the domain gap.
+
+Together with the existing attribution analysis (Grad-CAM, Integrated Gradients), this provides strong evidence that (a) the model learns from tissue content, (b) deep learning adds value over classical features, and (c) transfer learning is justified.
 
 ## All commits
 
@@ -133,6 +166,9 @@ fbf9fcb Merge pull request #2 from GRIAC-Bioinformatics/feature/ablation-texture
 cbe0b00 Update ABLATION_RESULTS.md with C tuning details and code review section
 2c4695d Add missing exports to config/__init__.py
 1060671 Update ABLATION_RESULTS.md with shuffled-label experiment result
+e7e5dfe Add complete ablation study work log
+33ce4c4 Add simple CNN baseline (ablation experiment 3)
+13f23d9 Update ABLATION_RESULTS.md with simple CNN baseline result
 ```
 
 ## All files created or modified
@@ -141,6 +177,7 @@ cbe0b00 Update ABLATION_RESULTS.md with C tuning details and code review section
 |------|--------|
 | `3_model/train_shuffled_labels.py` | Created |
 | `3_model/train_texture_baseline.py` | Created |
+| `3_model/train_simple_cnn.py` | Created |
 | `2_preprocessing/patch_splitting/3_data_imputation.py` | Bug fix (subfolder extraction) |
 | `config/__init__.py` | Added missing exports |
 | `ABLATION_RESULTS.md` | Created |
@@ -150,3 +187,4 @@ cbe0b00 Update ABLATION_RESULTS.md with C tuning details and code review section
 | `PIPELINE_GUIDE.md` | Added ablation scripts to table |
 | `5_results/ablation/texture_baseline/texture_baseline_results.json` | Generated |
 | `5_results/ablation/shuffled_labels/` | Generated (checkpoints, plots, config) |
+| `5_results/ablation/simple_cnn/` | Generated (checkpoints, plots, config) |

@@ -92,7 +92,8 @@ ImageRecognition/
 │   │   └── config_hydra.yaml           # Hydra configuration
 │   ├── train_nn_inner_outer_gpu_pytorch.py  # Main training script (PyTorch)
 │   ├── train_shuffled_labels.py             # Ablation: shuffled-label control
-│   └── train_texture_baseline.py            # Ablation: GLCM+LBP+SVM baseline
+│   ├── train_texture_baseline.py            # Ablation: GLCM+LBP+SVM baseline
+│   └── train_simple_cnn.py                  # Ablation: simple CNN from scratch
 │
 ├── 4_evaluation/                        # Evaluation and visualization
 │   ├── config/                          # Evaluation configuration files
