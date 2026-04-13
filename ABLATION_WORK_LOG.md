@@ -143,7 +143,7 @@ Retrieved results (checkpoints, training curves, config JSON) from pod to local 
 Standalone script that generates three figures for the rebuttal letter, reading entirely from already-saved experiment outputs (no retraining):
 
 1. **`fig1_ablation_auc.png` / `.pdf`** — Horizontal bar chart of test AUC for all four models (shuffled 0.50, texture 0.71, simple CNN 0.76, Inception-ResNet-V2 0.84) with a chance-level reference line.
-2. **`fig2_training_curves.png` / `.pdf`** — Two-panel figure (validation loss + validation AUC) showing training dynamics of shuffled labels vs. simple CNN vs. main CNN. Visually demonstrates that the shuffled-label model never learns.
+2. **`fig2_training_curves.png` / `.pdf`** — Two-panel figure (validation loss + validation AUC) comparing shuffled labels vs. simple CNN, both on the same 100-epoch schedule from random init. Inception-ResNet-V2 is deliberately excluded here because the reported run used a 50-epoch schedule and its pretrained features start far from random, making the training dynamics not like-for-like. The final AUC of the pretrained model is shown in Figure 1.
 3. **`fig3_texture_features.png` / `.pdf`** — 2×3 grid showing an example Inside and Outside patch alongside their LBP image and GLCM matrix. Makes the classical baseline tangible for the reviewer.
 
 Saved to `5_results/ablation/rebuttal_figures/`. Runs on CPU in seconds.

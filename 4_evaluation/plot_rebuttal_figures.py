@@ -98,19 +98,25 @@ def _find_run_dir(base):
 
 
 def fig2_training_curves():
-    """Two-panel figure: loss (left), validation AUC (right) for three models."""
+    """Two-panel figure: loss (left), validation AUC (right).
+
+    Only compares the shuffled-label control with the simple CNN trained from
+    scratch — both run for the same 100 epochs with the same hyperparameters,
+    so the dynamics are directly comparable. The Inception-ResNet-V2 model
+    is deliberately excluded here because (a) the reported run used a
+    different (50-epoch) schedule and (b) its ImageNet-pretrained features
+    start far from random, making the training dynamics not like-for-like.
+    Final test AUC of the pretrained model is shown in Figure 1 instead.
+    """
     shuffled_dir = _find_run_dir(RESULTS_DIR / 'ablation' / 'shuffled_labels')
     simple_dir   = _find_run_dir(RESULTS_DIR / 'ablation' / 'simple_cnn')
-    main_dir     = RESULTS_DIR / 'example'
 
     shuffled_loss, shuffled_auc = _load_history(shuffled_dir)
     simple_loss,   simple_auc   = _load_history(simple_dir)
-    main_loss,     main_auc     = _load_history(main_dir)
 
     models = [
-        ('Shuffled labels',      shuffled_loss, shuffled_auc, '#9e9e9e'),
-        ('Simple CNN',            simple_loss,   simple_auc,   '#42a5f5'),
-        ('Inception-ResNet-V2',  main_loss,     main_auc,     '#1565c0'),
+        ('Shuffled labels',  shuffled_loss, shuffled_auc, '#9e9e9e'),
+        ('Simple CNN',        simple_loss,   simple_auc,   '#42a5f5'),
     ]
 
     fig, (ax_loss, ax_auc) = plt.subplots(1, 2, figsize=(12, 4.5))
